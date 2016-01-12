@@ -8,6 +8,10 @@ php:
   - '7.0'
   - hhvm
 
+env:
+  global:
+    secure: 7R2wymlnwWGwDpY564wuKZX/Dr0RCPdXsVOw4jVF+oo3DTqxhMzwVvZfBOoj11Q2m/soo1/ROn7yBYtmiUo1+bSOLQzOQXonWfAU+FSp/5U7Ot2BwgdQcaCoGM1QHWyCkBRR1crhEHMCEg/ft1Nd9n85+SiTobs2GB6bg7EEZrBc8Hv7pChEvi/WsFT130rgE7fxmEIfxSdLU9s8kE9I2MgKmrk5nbPtHNulIrLe9QWxQq1m8U+xrcot+DrmWPNiDS8FJURJclvxCaEw3DgkcWNGo94FFYDfmQ5t18u29LWzQlNtZBI900WBcXO+G2yk3M+HQ8WemTI0mkVrm9/qdIfqhgg2uTeQ+6yWxectDbTBDH6cqu3DhM5PVPPqHPtMg88cky1nLMCy1dS//8ifHC26uTTJNuEwtZUkvptbWtl5vsswg8XXtxtt+MTVxkfJNdTCpqvJFyVbubmGApLqIZEKVClGJjWvWpF0Zy1rSl9DosRP0Bsn3IudlaWMC4uaqqDkz0jgpHs6hDX84snvTlD7c4sDJ2ykZC5tUWUxHPbAnW2t742uJBNpli/3ILYeQplufSp6r+IhaDo6OyF7PMU9UCJAwivAVNHj/A/9U/fXFTbIdMkuH6cKcUwAD0vxRH4i1P/ZOXK2/duYbKz5XS5NP3PA5E1BKq4eJlJeu+A=
+
 matrix:
   fast_finish: true
   allow_failures:
@@ -25,6 +29,22 @@ install:
 
 script:
   - composer test-ci
+
+after_success:
+  - [ $TRAVIS_PHP_VERSION != '5.6' ] && exit
+  - [ $TRAVIS_BRANCH != 'master' ] && exit
+  - [ $TRAVIS_PULL_REQUEST != 'false' ] && exit
+  - REPOSITORY=${REPOSITORY:-"https://${GH_TOKEN}@github.com/ecailles/callable-object.git"}
+  - BRANCH=${BRANCH:-"gh-pages"}
+  - BUILD_DIR=${BUILD_DIR:-"/tmp/apigen"}
+  - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-"Travis CI"}
+  - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-"travis@travis-ci.org"}
+  - git clone --branch "${BRANCH}" --depth 1 "${REPOSITORY}" "${BUILD_DIR}"
+  - yes | vendor/bin/apigen generate -d "${BUILD_DIR}"
+  - cd "${BUILD_DIR}" || exit 1
+  - git add .
+  - git commit -m "docs: generate API documentation"
+  - git push origin "${BRANCH}"
 
 notifications:
   email:
