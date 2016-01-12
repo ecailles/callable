@@ -1,0 +1,24 @@
+source: [./src/]
+destination: api/
+accessLevels: [public, protected]
+annotationGroups:
+baseUrl:
+googleCseId:
+googleAnalytics:
+debug: No
+deprecated: Yes
+download: Yes
+extensions: [php]
+exclude: [*/tests/]
+groups: auto
+charset: [UTF-8]
+main:
+internal: Yes
+php: Yes
+skipDocPath: []
+noSourceCode: No
+templateTheme: default
+title: CallableObject API Documentation
+todo: No
+tree: Yes
+quiet: No
