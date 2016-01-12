@@ -31,9 +31,9 @@ script:
   - composer test-ci
 
 after_success:
-  - [ $TRAVIS_PHP_VERSION != '5.6' ] && exit
-  - [ $TRAVIS_BRANCH != 'master' ] && exit
-  - [ $TRAVIS_PULL_REQUEST != 'false' ] && exit
+  - if [ $TRAVIS_PHP_VERSION != '5.6' ]; then exit; fi
+  - if [ $TRAVIS_BRANCH != 'master' ]; then exit; fi
+  - if [ $TRAVIS_PULL_REQUEST != 'false' ]; then exit; fi
   - REPOSITORY=${REPOSITORY:-"https://${GH_TOKEN}@github.com/ecailles/callable-object.git"}
   - BRANCH=${BRANCH:-"gh-pages"}
   - BUILD_DIR=${BUILD_DIR:-"/tmp/apigen"}
@@ -43,7 +43,7 @@ after_success:
   - yes | vendor/bin/apigen generate -d "${BUILD_DIR}"
   - cd "${BUILD_DIR}" || exit 1
   - git add .
-  - git commit -m "docs: generate API documentation"
+  - "git commit -m 'docs: generate API documentation'"
   - git push origin "${BRANCH}"
 
 notifications:
