@@ -2,9 +2,9 @@
 
 ## Install via Composer
 
-    ```sh
-    composer require ecailles/callable-object
-    ```
+```sh
+composer require ecailles/callable-object
+```
 
 [travis-image]: https://travis-ci.org/ecailles/callable-object.svg?branch=master
 [travis-url]: https://travis-ci.org/ecailles/callable-object
