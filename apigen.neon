@@ -6,7 +6,7 @@ googleCseId:
 googleAnalytics:
 debug: No
 deprecated: Yes
-download: Yes
+download: No
 extensions: [php]
 exclude: []
 groups: auto
