@@ -53,7 +53,7 @@
             "phpunit --colors=always"
         ],
         "docs"   : [
-            "apigen generate"
+            "apigen generate -d api/"
         ],
         "test-ci": [
             "phpcs --colors",

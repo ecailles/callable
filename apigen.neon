@@ -1,5 +1,4 @@
 source: [./src/]
-destination: api/
 accessLevels: [public, protected]
 annotationGroups:
 baseUrl:
