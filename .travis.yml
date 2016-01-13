@@ -39,14 +39,14 @@ after_success:
   - BUILD_DIR=${BUILD_DIR:-"/tmp/apigen"}
   - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-"Travis CI"}
   - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-"travis@travis-ci.org"}
-  - git clone --branch "${BRANCH}" --depth 1 "${REPOSITORY}" "${BUILD_DIR}"
-  - yes | vendor/bin/apigen generate -d "${BUILD_DIR}"
-  - cd "${BUILD_DIR}" || exit 1
+  - git clone --branch "$BRANCH" --depth 1 "$REPOSITORY" "$BUILD_DIR"
+  - yes | vendor/bin/apigen generate -d "$BUILD_DIR"
+  - cd "$BUILD_DIR" || exit 1
   - git config user.name "$GIT_AUTHOR_NAME"
   - git config user.email "$GIT_AUTHOR_EMAIL"
   - git add .
   - "git commit -m 'docs: generate API documentation'"
-  - git push origin "${BRANCH}"
+  - git push origin "$BRANCH"
 
 notifications:
   email:
