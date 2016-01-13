@@ -8,7 +8,7 @@ debug: No
 deprecated: Yes
 download: Yes
 extensions: [php]
-exclude: [*/tests/]
+exclude: []
 groups: auto
 charset: [UTF-8]
 main:
