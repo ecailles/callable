@@ -73,5 +73,10 @@
             "apigen.neon",
             ".travis.yml"
         ]
+    },
+    "extra"            : {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
     }
 }
