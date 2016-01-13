@@ -57,7 +57,7 @@
         ],
         "test-ci": [
             "phpcs --colors",
-            "phpunit --colors --verbose --coverage-clover build/logs/clover.xml"
+            "phpunit --colors=always --verbose --coverage-clover build/logs/clover.xml"
         ]
     },
     "archive"          : {
