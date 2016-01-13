@@ -31,22 +31,24 @@ script:
   - composer test-ci
 
 after_success:
-  - if [ $TRAVIS_PHP_VERSION != '5.6' ]; then exit; fi
-  - if [ $TRAVIS_BRANCH != 'master' ]; then exit; fi
-  - if [ $TRAVIS_PULL_REQUEST != 'false' ]; then exit; fi
-  - REPOSITORY=${REPOSITORY:-"https://${GH_TOKEN}@github.com/ecailles/callable-object.git"}
-  - BRANCH=${BRANCH:-"gh-pages"}
-  - BUILD_DIR=${BUILD_DIR:-"/tmp/apigen"}
-  - GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-"Travis CI"}
-  - GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-"travis@travis-ci.org"}
-  - git clone --branch "$BRANCH" --depth 1 "$REPOSITORY" "$BUILD_DIR"
-  - yes | vendor/bin/apigen generate -d "$BUILD_DIR"
-  - cd "$BUILD_DIR" || exit 1
-  - git config user.name "$GIT_AUTHOR_NAME"
-  - git config user.email "$GIT_AUTHOR_EMAIL"
-  - git add .
-  - "git commit -m 'docs: generate API documentation'"
-  - git push origin "$BRANCH"
+  - APIGEN=false
+  - if [ $TRAVIS_PHP_VERSION == '5.6' && $TRAVIS_BRANCH == 'master' && $TRAVIS_PULL_REQUEST == 'false' ]; then APIGEN=true; fi
+  - "$APIGEN" && REPOSITORY=${REPOSITORY:-"https://${GH_TOKEN}@github.com/ecailles/callable-object.git"}
+  - "$APIGEN" && BRANCH=${BRANCH:-"gh-pages"}
+  - "$APIGEN" && BUILD_DIR=${BUILD_DIR:-"/tmp/apigen"}
+  - "$APIGEN" && GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-"Travis CI"}
+  - "$APIGEN" && GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-"travis@travis-ci.org"}
+  - "$APIGEN" && git clone --branch "$BRANCH" --depth 1 "$REPOSITORY" "$BUILD_DIR"
+  - "$APIGEN" && yes | vendor/bin/apigen generate -d "$BUILD_DIR"
+  - "$APIGEN" && cd "$BUILD_DIR" || exit 1
+  - "$APIGEN" && git config user.name "$GIT_AUTHOR_NAME"
+  - "$APIGEN" && git config user.email "$GIT_AUTHOR_EMAIL"
+  - "$APIGEN" && git add .
+  - "$APIGEN && git commit -m 'docs: generate API documentation'"
+  - "$APIGEN" && git push origin "$BRANCH"
+
+after_script:
+  - vendor/bin/coveralls --verbose
 
 notifications:
   email:
