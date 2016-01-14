@@ -154,13 +154,13 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject(
             [
                 'Tests\Ecailles\CallableObject\TestClass',
-                'classMethodWithParameters'
+                'classMethodWithParameters',
             ]
         );
         $callableWithoutParameters = new CallableObject(
             [
                 'Tests\Ecailles\CallableObject\TestClass',
-                'classMethodWithoutParameters'
+                'classMethodWithoutParameters',
             ]
         );
 
@@ -221,13 +221,13 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject(
             [
                 'Tests\Ecailles\CallableObject\TestClass',
-                'classMethodWithParameters'
+                'classMethodWithParameters',
             ]
         );
         $callableWithoutParameters = new CallableObject(
             [
                 'Tests\Ecailles\CallableObject\TestClass',
-                'classMethodWithoutParameters'
+                'classMethodWithoutParameters',
             ]
         );
 
@@ -288,13 +288,13 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject(
             [
                 'Tests\Ecailles\CallableObject\TestClass',
-                'classMethodWithParameters'
+                'classMethodWithParameters',
             ]
         );
         $callableWithoutParameters = new CallableObject(
             [
                 'Tests\Ecailles\CallableObject\TestClass',
-                'classMethodWithoutParameters'
+                'classMethodWithoutParameters',
             ]
         );
 
