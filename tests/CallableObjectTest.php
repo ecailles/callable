@@ -26,7 +26,7 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
     {
         $callable = new CallableObject('Tests\Ecailles\CallableObject\testFunctionWithParameters');
 
-        $this->assertSame($callable->get(), 'Tests\Ecailles\CallableObject\testFunctionWithParameters');
+        $this->assertSame('Tests\Ecailles\CallableObject\testFunctionWithParameters', $callable->get());
     }
 
     public function testGetShouldReturnTheRawCallableOfTheClosure()
@@ -35,7 +35,7 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         };
         $callable = new CallableObject($closure);
 
-        $this->assertSame($callable->get(), $closure);
+        $this->assertSame($closure, $callable->get());
     }
 
     public function testGetShouldReturnTheRawCallableOfInstanceMethod()
@@ -43,21 +43,21 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $testClass = new TestClass();
         $callable  = new CallableObject([$testClass, 'instanceMethodWithParameters']);
 
-        $this->assertSame($callable->get(), [$testClass, 'instanceMethodWithParameters']);
+        $this->assertSame([$testClass, 'instanceMethodWithParameters'], $callable->get());
     }
 
     public function testGetShouldReturnTheRawCallableOfClassMethodThatIsRepresentedAsAnArray()
     {
         $callable = new CallableObject(['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters']);
 
-        $this->assertSame($callable->get(), ['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters']);
+        $this->assertSame(['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters'], $callable->get());
     }
 
     public function testGetShouldReturnTheRawCallableOfClassMethodThatIsRepresentedAsAString()
     {
         $callable = new CallableObject('Tests\Ecailles\CallableObject\TestClass::classMethodWithParameters');
 
-        $this->assertSame($callable->get(), ['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters']);
+        $this->assertSame(['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters'], $callable->get());
     }
 
     public function testIsFunctionShouldReturnTrueForFunction()
@@ -119,8 +119,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject('Tests\Ecailles\CallableObject\testFunctionWithParameters');
         $callableWithoutParameters = new CallableObject('Tests\Ecailles\CallableObject\testFunctionWithoutParameters');
 
-        $this->assertSame($callableWithParameters(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters(), null);
+        $this->assertSame([1, 2], $callableWithParameters(1, 2));
+        $this->assertSame(null, $callableWithoutParameters());
     }
 
     public function testClosureShouldBeCallable()
@@ -135,8 +135,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertSame($callableWithParameters(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters(), null);
+        $this->assertSame([1, 2], $callableWithParameters(1, 2));
+        $this->assertSame(null, $callableWithoutParameters());
     }
 
     public function testInstanceMethodShouldBeCallable()
@@ -145,8 +145,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject([$testClass, 'instanceMethodWithParameters']);
         $callableWithoutParameters = new CallableObject([$testClass, 'instanceMethodWithoutParameters']);
 
-        $this->assertSame($callableWithParameters(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters(), null);
+        $this->assertSame([1, 2], $callableWithParameters(1, 2));
+        $this->assertSame(null, $callableWithoutParameters());
     }
 
     public function testClassMethodThatIsRepresentedAsAnArrayShouldBeCallable()
@@ -164,8 +164,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertSame($callableWithParameters(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters(), null);
+        $this->assertSame([1, 2], $callableWithParameters(1, 2));
+        $this->assertSame(null, $callableWithoutParameters());
     }
 
     public function testClassMethodThatIsRepresentedAsAStringShouldBeCallable()
@@ -177,8 +177,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             'Tests\Ecailles\CallableObject\TestClass::classMethodWithoutParameters'
         );
 
-        $this->assertSame($callableWithParameters(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters(), null);
+        $this->assertSame([1, 2], $callableWithParameters(1, 2));
+        $this->assertSame(null, $callableWithoutParameters());
     }
 
     public function testFunctionShouldBeCallableWithInvoke()
@@ -186,8 +186,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject('Tests\Ecailles\CallableObject\testFunctionWithParameters');
         $callableWithoutParameters = new CallableObject('Tests\Ecailles\CallableObject\testFunctionWithoutParameters');
 
-        $this->assertSame($callableWithParameters->invoke(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invoke(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invoke(1, 2));
+        $this->assertSame(null, $callableWithoutParameters->invoke());
     }
 
     public function testClosureShouldBeCallableWithInvoke()
@@ -202,8 +202,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertSame($callableWithParameters->invoke(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invoke(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invoke(1, 2));
+        $this->assertSame(null, $callableWithoutParameters->invoke());
     }
 
     public function testInstanceMethodShouldBeCallableWithInvoke()
@@ -212,8 +212,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject([$testClass, 'instanceMethodWithParameters']);
         $callableWithoutParameters = new CallableObject([$testClass, 'instanceMethodWithoutParameters']);
 
-        $this->assertSame($callableWithParameters->invoke(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invoke(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invoke(1, 2));
+        $this->assertSame(null, $callableWithoutParameters->invoke());
     }
 
     public function testClassMethodThatIsRepresentedAsAnArrayShouldBeCallableWithInvoke()
@@ -231,8 +231,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertSame($callableWithParameters->invoke(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invoke(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invoke(1, 2));
+        $this->assertSame(null, $callableWithoutParameters->invoke());
     }
 
     public function testClassMethodThatIsRepresentedAsAStringShouldBeCallableWithInvoke()
@@ -244,8 +244,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             'Tests\Ecailles\CallableObject\TestClass::classMethodWithoutParameters'
         );
 
-        $this->assertSame($callableWithParameters->invoke(1, 2), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invoke(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invoke(1, 2));
+        $this->assertSame(null, $callableWithoutParameters->invoke());
     }
 
     public function testFunctionShouldBeCallableWithInvokeArgs()
@@ -253,8 +253,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject('Tests\Ecailles\CallableObject\testFunctionWithParameters');
         $callableWithoutParameters = new CallableObject('Tests\Ecailles\CallableObject\testFunctionWithoutParameters');
 
-        $this->assertSame($callableWithParameters->invokeArgs([1, 2]), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invokeArgs(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invokeArgs([1, 2]));
+        $this->assertSame(null, $callableWithoutParameters->invokeArgs());
     }
 
     public function testClosureShouldBeCallableWithInvokeArgs()
@@ -269,8 +269,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertSame($callableWithParameters->invokeArgs([1, 2]), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invokeArgs(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invokeArgs([1, 2]));
+        $this->assertSame(null, $callableWithoutParameters->invokeArgs());
     }
 
     public function testInstanceMethodShouldBeCallableWithInvokeArgs()
@@ -279,8 +279,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callableWithParameters    = new CallableObject([$testClass, 'instanceMethodWithParameters']);
         $callableWithoutParameters = new CallableObject([$testClass, 'instanceMethodWithoutParameters']);
 
-        $this->assertSame($callableWithParameters->invokeArgs([1, 2]), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invokeArgs(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invokeArgs([1, 2]));
+        $this->assertSame(null, $callableWithoutParameters->invokeArgs());
     }
 
     public function testClassMethodThatIsRepresentedAsAnArrayShouldBeCallableWithInvokeArgs()
@@ -298,8 +298,8 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->assertSame($callableWithParameters->invokeArgs([1, 2]), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invokeArgs(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invokeArgs([1, 2]));
+        $this->assertSame(null, $callableWithoutParameters->invokeArgs());
     }
 
     public function testClassMethodThatIsRepresentedAsAStringShouldBeCallableWithInvokeArgs()
@@ -311,7 +311,7 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
             'Tests\Ecailles\CallableObject\TestClass::classMethodWithoutParameters'
         );
 
-        $this->assertSame($callableWithParameters->invokeArgs([1, 2]), [1, 2]);
-        $this->assertSame($callableWithoutParameters->invokeArgs(), null);
+        $this->assertSame([1, 2], $callableWithParameters->invokeArgs([1, 2]));
+        $this->assertSame(null, $callableWithoutParameters->invokeArgs());
     }
 }
