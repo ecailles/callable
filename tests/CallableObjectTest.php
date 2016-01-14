@@ -46,6 +46,16 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $this->assertSame([$testClass, 'instanceMethodWithParameters'], $callable->get());
     }
 
+    public function testGetShouldReturnTheRawCallableOfMagicMethod()
+    {
+        $testClass  = new TestClass();
+        $callable   = new CallableObject([$testClass, 'unknownMethod']);
+        $directCall = new CallableObject([$testClass, '__call']);
+
+        $this->assertSame([$testClass, 'unknownMethod'], $callable->get());
+        $this->assertSame([$testClass, '__call'], $directCall->get());
+    }
+
     public function testGetShouldReturnTheRawCallableOfClassMethodThatIsRepresentedAsAnArray()
     {
         $callable = new CallableObject(['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters']);
@@ -58,6 +68,24 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $callable = new CallableObject('Tests\Ecailles\CallableObject\TestClass::classMethodWithParameters');
 
         $this->assertSame(['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters'], $callable->get());
+    }
+
+    public function testGetShouldReturnTheRawCallableOfCallStaticMethodThatIsRepresentedAsAnArray()
+    {
+        $callable   = new CallableObject(['Tests\Ecailles\CallableObject\TestClass', 'unknownMethod']);
+        $directCall = new CallableObject(['Tests\Ecailles\CallableObject\TestClass', '__callStatic']);
+
+        $this->assertSame(['Tests\Ecailles\CallableObject\TestClass', 'unknownMethod'], $callable->get());
+        $this->assertSame(['Tests\Ecailles\CallableObject\TestClass', '__callStatic'], $directCall->get());
+    }
+
+    public function testGetShouldReturnTheRawCallableOfCallStaticMethodThatIsRepresentedAsAString()
+    {
+        $callable   = new CallableObject('Tests\Ecailles\CallableObject\TestClass::unknownMethod');
+        $directCall = new CallableObject('Tests\Ecailles\CallableObject\TestClass::__callStatic');
+
+        $this->assertSame(['Tests\Ecailles\CallableObject\TestClass', 'unknownMethod'], $callable->get());
+        $this->assertSame(['Tests\Ecailles\CallableObject\TestClass', '__callStatic'], $directCall->get());
     }
 
     public function testIsFunctionShouldReturnTrueForFunction()
@@ -94,6 +122,23 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($callable->isClassMethod());
     }
 
+    public function testIsInstanceMethodShouldReturnTrueForMagicMethod()
+    {
+        $testClass  = new TestClass();
+        $callable   = new CallableObject([$testClass, 'unknownMethod']);
+        $directCall = new CallableObject([$testClass, '__call']);
+
+        $this->assertFalse($callable->isFunction());
+        $this->assertFalse($callable->isClosure());
+        $this->assertTrue($callable->isInstanceMethod());
+        $this->assertFalse($callable->isClassMethod());
+
+        $this->assertFalse($directCall->isFunction());
+        $this->assertFalse($directCall->isClosure());
+        $this->assertTrue($directCall->isInstanceMethod());
+        $this->assertFalse($directCall->isClassMethod());
+    }
+
     public function testIsClassMethodShouldReturnTrueForClassMethodThatIsRepresentedAsAnArray()
     {
         $callable = new CallableObject(['Tests\Ecailles\CallableObject\TestClass', 'classMethodWithParameters']);
@@ -112,6 +157,38 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($callable->isClosure());
         $this->assertFalse($callable->isInstanceMethod());
         $this->assertTrue($callable->isClassMethod());
+    }
+
+    public function testIsClassMethodShouldReturnTrueForCallStaticMethodThatIsRepresentedAsAnArray()
+    {
+        $callable   = new CallableObject(['Tests\Ecailles\CallableObject\TestClass', 'unknownMethod']);
+        $directCall = new CallableObject(['Tests\Ecailles\CallableObject\TestClass', '__callStatic']);
+
+        $this->assertFalse($callable->isFunction());
+        $this->assertFalse($callable->isClosure());
+        $this->assertFalse($callable->isInstanceMethod());
+        $this->assertTrue($callable->isClassMethod());
+
+        $this->assertFalse($directCall->isFunction());
+        $this->assertFalse($directCall->isClosure());
+        $this->assertFalse($directCall->isInstanceMethod());
+        $this->assertTrue($directCall->isClassMethod());
+    }
+
+    public function testIsClassMethodShouldReturnTrueForCallStaticMethodThatIsRepresentedAsAString()
+    {
+        $callable   = new CallableObject('Tests\Ecailles\CallableObject\TestClass::unknownMethod');
+        $directCall = new CallableObject('Tests\Ecailles\CallableObject\TestClass::__callStatic');
+
+        $this->assertFalse($callable->isFunction());
+        $this->assertFalse($callable->isClosure());
+        $this->assertFalse($callable->isInstanceMethod());
+        $this->assertTrue($callable->isClassMethod());
+
+        $this->assertFalse($directCall->isFunction());
+        $this->assertFalse($directCall->isClosure());
+        $this->assertFalse($directCall->isInstanceMethod());
+        $this->assertTrue($directCall->isClassMethod());
     }
 
     public function testFunctionShouldBeCallable()
@@ -149,6 +226,18 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $this->assertSame(null, $callableWithoutParameters());
     }
 
+    public function testMagicMethodShouldBeCallable()
+    {
+        $testClass  = new TestClass();
+        $callable   = new CallableObject([$testClass, 'unknownMethod']);
+        $directCall = new CallableObject([$testClass, '__call']);
+
+        $this->assertSame('unknownMethod', $callable(1, 2));
+        $this->assertSame('unknownMethod', $callable());
+
+        $this->assertSame('name', $directCall('name', []));
+    }
+
     public function testClassMethodThatIsRepresentedAsAnArrayShouldBeCallable()
     {
         $callableWithParameters    = new CallableObject(
@@ -179,6 +268,44 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame([1, 2], $callableWithParameters(1, 2));
         $this->assertSame(null, $callableWithoutParameters());
+    }
+
+    public function testCallStaticMethodThatIsRepresentedAsAnArrayShouldBeCallable()
+    {
+        $callable   = new CallableObject(
+            [
+                'Tests\Ecailles\CallableObject\TestClass',
+                'unknownMethod',
+            ]
+        );
+        $directCall = new CallableObject(
+            [
+                'Tests\Ecailles\CallableObject\TestClass',
+                '__callStatic',
+            ]
+        );
+
+        $this->assertSame('unknownMethod', $callable(1, 2));
+        $this->assertSame('unknownMethod', $callable());
+
+        $this->assertSame('name', $directCall('name', []));
+        $this->assertSame('name', $directCall('name', []));
+    }
+
+    public function testCallStaticMethodThatIsRepresentedAsAStringShouldBeCallable()
+    {
+        $callable   = new CallableObject(
+            'Tests\Ecailles\CallableObject\TestClass::unknownMethod'
+        );
+        $directCall = new CallableObject(
+            'Tests\Ecailles\CallableObject\TestClass::__callStatic'
+        );
+
+        $this->assertSame('unknownMethod', $callable(1, 2));
+        $this->assertSame('unknownMethod', $callable());
+
+        $this->assertSame('name', $directCall('name', []));
+        $this->assertSame('name', $directCall('name', []));
     }
 
     public function testFunctionShouldBeCallableWithInvoke()
@@ -216,6 +343,18 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $this->assertSame(null, $callableWithoutParameters->invoke());
     }
 
+    public function testMagicMethodShouldBeCallableWithInvoke()
+    {
+        $testClass  = new TestClass();
+        $callable   = new CallableObject([$testClass, 'unknownMethod']);
+        $directCall = new CallableObject([$testClass, '__call']);
+
+        $this->assertSame('unknownMethod', $callable->invoke(1, 2));
+        $this->assertSame('unknownMethod', $callable->invoke());
+
+        $this->assertSame('name', $directCall->invoke('name', []));
+    }
+
     public function testClassMethodThatIsRepresentedAsAnArrayShouldBeCallableWithInvoke()
     {
         $callableWithParameters    = new CallableObject(
@@ -246,6 +385,44 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame([1, 2], $callableWithParameters->invoke(1, 2));
         $this->assertSame(null, $callableWithoutParameters->invoke());
+    }
+
+    public function testCallStaticMethodThatIsRepresentedAsAnArrayShouldBeCallableWithInvoke()
+    {
+        $callable   = new CallableObject(
+            [
+                'Tests\Ecailles\CallableObject\TestClass',
+                'unknownMethod',
+            ]
+        );
+        $directCall = new CallableObject(
+            [
+                'Tests\Ecailles\CallableObject\TestClass',
+                '__callStatic',
+            ]
+        );
+
+        $this->assertSame('unknownMethod', $callable->invoke(1, 2));
+        $this->assertSame('unknownMethod', $callable->invoke());
+
+        $this->assertSame('name', $directCall->invoke('name', []));
+        $this->assertSame('name', $directCall->invoke('name', []));
+    }
+
+    public function testCallStaticMethodThatIsRepresentedAsAStringShouldBeCallableWithInvoke()
+    {
+        $callable   = new CallableObject(
+            'Tests\Ecailles\CallableObject\TestClass::unknownMethod'
+        );
+        $directCall = new CallableObject(
+            'Tests\Ecailles\CallableObject\TestClass::__callStatic'
+        );
+
+        $this->assertSame('unknownMethod', $callable->invoke(1, 2));
+        $this->assertSame('unknownMethod', $callable->invoke());
+
+        $this->assertSame('name', $directCall->invoke('name', []));
+        $this->assertSame('name', $directCall->invoke('name', []));
     }
 
     public function testFunctionShouldBeCallableWithInvokeArgs()
@@ -283,6 +460,18 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
         $this->assertSame(null, $callableWithoutParameters->invokeArgs());
     }
 
+    public function testMagicMethodShouldBeCallableWithInvokeArgs()
+    {
+        $testClass  = new TestClass();
+        $callable   = new CallableObject([$testClass, 'unknownMethod']);
+        $directCall = new CallableObject([$testClass, '__call']);
+
+        $this->assertSame('unknownMethod', $callable->invokeArgs([1, 2]));
+        $this->assertSame('unknownMethod', $callable->invokeArgs());
+
+        $this->assertSame('name', $directCall->invokeArgs(['name', []]));
+    }
+
     public function testClassMethodThatIsRepresentedAsAnArrayShouldBeCallableWithInvokeArgs()
     {
         $callableWithParameters    = new CallableObject(
@@ -313,5 +502,43 @@ class CallableObjectTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame([1, 2], $callableWithParameters->invokeArgs([1, 2]));
         $this->assertSame(null, $callableWithoutParameters->invokeArgs());
+    }
+
+    public function testCallStaticMethodThatIsRepresentedAsAnArrayShouldBeCallableWithInvokeArgs()
+    {
+        $callable   = new CallableObject(
+            [
+                'Tests\Ecailles\CallableObject\TestClass',
+                'unknownMethod',
+            ]
+        );
+        $directCall = new CallableObject(
+            [
+                'Tests\Ecailles\CallableObject\TestClass',
+                '__callStatic',
+            ]
+        );
+
+        $this->assertSame('unknownMethod', $callable->invokeArgs([1, 2]));
+        $this->assertSame('unknownMethod', $callable->invokeArgs());
+
+        $this->assertSame('name', $directCall->invokeArgs(['name', []]));
+        $this->assertSame('name', $directCall->invokeArgs(['name', []]));
+    }
+
+    public function testCallStaticThatIsRepresentedAsAStringShouldBeCallableWithInvokeArgs()
+    {
+        $callable   = new CallableObject(
+            'Tests\Ecailles\CallableObject\TestClass::unknownMethod'
+        );
+        $directCall = new CallableObject(
+            'Tests\Ecailles\CallableObject\TestClass::__callStatic'
+        );
+
+        $this->assertSame('unknownMethod', $callable->invokeArgs([1, 2]));
+        $this->assertSame('unknownMethod', $callable->invokeArgs());
+
+        $this->assertSame('name', $directCall->invokeArgs(['name', []]));
+        $this->assertSame('name', $directCall->invokeArgs(['name', []]));
     }
 }
