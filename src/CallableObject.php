@@ -79,6 +79,22 @@ class CallableObject
     }
 
     /**
+     * Returns whether the callable is overloadable.
+     *
+     * @return bool True if it is overloadable, false otherwise.
+     */
+    public function isOverloadable()
+    {
+        if (($this->isInstanceMethod() || $this->isClassMethod()) &&
+            !$this->exists() && is_callable([$this->callable[0], '__call'])
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns whether the callable is a function.
      *
      * @return bool True if it is a function, false otherwise.
@@ -116,5 +132,25 @@ class CallableObject
     public function isClassMethod()
     {
         return is_array($this->callable) && is_string($this->callable[0]);
+    }
+
+    /**
+     * Returns whether the callable actually exists.
+     *
+     * @return bool True if it exists, false otherwise.
+     */
+    public function exists()
+    {
+        if ($this->isFunction() || $this->isClosure()) {
+            return true;
+        }
+
+        if (($this->isInstanceMethod() || $this->isClassMethod())
+            && method_exists($this->callable[0], $this->callable[1])
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
