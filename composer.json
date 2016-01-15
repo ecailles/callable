@@ -9,7 +9,7 @@
         "closure"
     ],
     "homepage"         : "https://github.com/ecailles/callable-object",
-    "license"          : "license",
+    "license"          : "MIT",
     "authors"          : [
         {
             "name"    : "Whizark",
