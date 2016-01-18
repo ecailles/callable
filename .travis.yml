@@ -3,61 +3,61 @@ sudo: false
 language: php
 
 php:
-  - '5.5'
-  - '5.6'
-  - '7.0'
-  - hhvm
+    - '5.5'
+    - '5.6'
+    - '7.0'
+    - hhvm
 
 env:
-  global:
-    secure: 7R2wymlnwWGwDpY564wuKZX/Dr0RCPdXsVOw4jVF+oo3DTqxhMzwVvZfBOoj11Q2m/soo1/ROn7yBYtmiUo1+bSOLQzOQXonWfAU+FSp/5U7Ot2BwgdQcaCoGM1QHWyCkBRR1crhEHMCEg/ft1Nd9n85+SiTobs2GB6bg7EEZrBc8Hv7pChEvi/WsFT130rgE7fxmEIfxSdLU9s8kE9I2MgKmrk5nbPtHNulIrLe9QWxQq1m8U+xrcot+DrmWPNiDS8FJURJclvxCaEw3DgkcWNGo94FFYDfmQ5t18u29LWzQlNtZBI900WBcXO+G2yk3M+HQ8WemTI0mkVrm9/qdIfqhgg2uTeQ+6yWxectDbTBDH6cqu3DhM5PVPPqHPtMg88cky1nLMCy1dS//8ifHC26uTTJNuEwtZUkvptbWtl5vsswg8XXtxtt+MTVxkfJNdTCpqvJFyVbubmGApLqIZEKVClGJjWvWpF0Zy1rSl9DosRP0Bsn3IudlaWMC4uaqqDkz0jgpHs6hDX84snvTlD7c4sDJ2ykZC5tUWUxHPbAnW2t742uJBNpli/3ILYeQplufSp6r+IhaDo6OyF7PMU9UCJAwivAVNHj/A/9U/fXFTbIdMkuH6cKcUwAD0vxRH4i1P/ZOXK2/duYbKz5XS5NP3PA5E1BKq4eJlJeu+A=
+    global:
+        secure: 7R2wymlnwWGwDpY564wuKZX/Dr0RCPdXsVOw4jVF+oo3DTqxhMzwVvZfBOoj11Q2m/soo1/ROn7yBYtmiUo1+bSOLQzOQXonWfAU+FSp/5U7Ot2BwgdQcaCoGM1QHWyCkBRR1crhEHMCEg/ft1Nd9n85+SiTobs2GB6bg7EEZrBc8Hv7pChEvi/WsFT130rgE7fxmEIfxSdLU9s8kE9I2MgKmrk5nbPtHNulIrLe9QWxQq1m8U+xrcot+DrmWPNiDS8FJURJclvxCaEw3DgkcWNGo94FFYDfmQ5t18u29LWzQlNtZBI900WBcXO+G2yk3M+HQ8WemTI0mkVrm9/qdIfqhgg2uTeQ+6yWxectDbTBDH6cqu3DhM5PVPPqHPtMg88cky1nLMCy1dS//8ifHC26uTTJNuEwtZUkvptbWtl5vsswg8XXtxtt+MTVxkfJNdTCpqvJFyVbubmGApLqIZEKVClGJjWvWpF0Zy1rSl9DosRP0Bsn3IudlaWMC4uaqqDkz0jgpHs6hDX84snvTlD7c4sDJ2ykZC5tUWUxHPbAnW2t742uJBNpli/3ILYeQplufSp6r+IhaDo6OyF7PMU9UCJAwivAVNHj/A/9U/fXFTbIdMkuH6cKcUwAD0vxRH4i1P/ZOXK2/duYbKz5XS5NP3PA5E1BKq4eJlJeu+A=
 
 matrix:
-  fast_finish: true
-  allow_failures:
-    - php: hhvm
+    fast_finish: true
+    allow_failures:
+        - php: hhvm
 
 cache:
-  directories:
-    - node_modules
-    - $HOME/.composer/cache/files
+    directories:
+        - node_modules
+        - $HOME/.composer/cache/files
 
 before_install:
-  - npm config set spin false
-  - npm install -g npm
-  - composer self-update
+    - npm config set spin false
+    - npm install -g npm
+    - composer self-update
 
 install:
-  - npm install
-  - composer install --prefer-source
+    - npm install
+    - composer install --prefer-source
 
 script:
-  - npm run-script lint-ci
-  - composer test-ci
+    - npm run-script lint-ci
+    - composer test-ci
 
 after_success:
-  - APIGEN=false
-  - if [ "$TRAVIS_PHP_VERSION" = '5.6' ] && [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" = 'false' ]; then APIGEN=true; fi
-  - if $APIGEN; then BUILD_PATH="$(pwd)"; fi
-  - if $APIGEN; then REPOSITORY=${REPOSITORY:-"https://${GH_TOKEN}@github.com/ecailles/callable-object.git"}; fi
-  - if $APIGEN; then BRANCH=${BRANCH:-"gh-pages"}; fi
-  - if $APIGEN; then APIGEN_BUILD_PATH=${APIGEN_BUILD_PATH:-"/tmp/apigen"}; fi
-  - if $APIGEN; then GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-"Travis CI"}; fi
-  - if $APIGEN; then GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-"travis@travis-ci.org"}; fi
-  - if $APIGEN; then git clone --branch "$BRANCH" --depth 1 "$REPOSITORY" "$APIGEN_BUILD_PATH"; fi
-  - if $APIGEN; then yes | vendor/bin/apigen generate -d "$APIGEN_BUILD_PATH"; fi
-  - if $APIGEN; then cd "$APIGEN_BUILD_PATH" || exit 1; fi
-  - if $APIGEN; then git config user.name "$GIT_AUTHOR_NAME"; fi
-  - if $APIGEN; then git config user.email "$GIT_AUTHOR_EMAIL"; fi
-  - if $APIGEN; then git add -A; fi
-  - "if $APIGEN; then git commit -m 'docs: generate API documentation'; fi"
-  - if $APIGEN; then git push origin "$BRANCH"; fi
-  - if $APIGEN; then cd "$BUILD_PATH"; fi
+    - APIGEN=false
+    - if [ "$TRAVIS_PHP_VERSION" = '5.6' ] && [ "$TRAVIS_BRANCH" = 'master' ] && [ "$TRAVIS_PULL_REQUEST" = 'false' ]; then APIGEN=true; fi
+    - if $APIGEN; then BUILD_PATH="$(pwd)"; fi
+    - if $APIGEN; then REPOSITORY=${REPOSITORY:-"https://${GH_TOKEN}@github.com/ecailles/callable-object.git"}; fi
+    - if $APIGEN; then BRANCH=${BRANCH:-"gh-pages"}; fi
+    - if $APIGEN; then APIGEN_BUILD_PATH=${APIGEN_BUILD_PATH:-"/tmp/apigen"}; fi
+    - if $APIGEN; then GIT_AUTHOR_NAME=${GIT_AUTHOR_NAME:-"Travis CI"}; fi
+    - if $APIGEN; then GIT_AUTHOR_EMAIL=${GIT_AUTHOR_EMAIL:-"travis@travis-ci.org"}; fi
+    - if $APIGEN; then git clone --branch "$BRANCH" --depth 1 "$REPOSITORY" "$APIGEN_BUILD_PATH"; fi
+    - if $APIGEN; then yes | vendor/bin/apigen generate -d "$APIGEN_BUILD_PATH"; fi
+    - if $APIGEN; then cd "$APIGEN_BUILD_PATH" || exit 1; fi
+    - if $APIGEN; then git config user.name "$GIT_AUTHOR_NAME"; fi
+    - if $APIGEN; then git config user.email "$GIT_AUTHOR_EMAIL"; fi
+    - if $APIGEN; then git add -A; fi
+    - "if $APIGEN; then git commit -m 'docs: generate API documentation'; fi"
+    - if $APIGEN; then git push origin "$BRANCH"; fi
+    - if $APIGEN; then cd "$BUILD_PATH"; fi
 
 after_script:
-  - vendor/bin/coveralls --verbose
+    - vendor/bin/coveralls --verbose
 
 notifications:
-  email:
-    on_success: never
-    on_failure: change
+    email:
+        on_success: never
+        on_failure: change
